@@ -1,0 +1,7 @@
+:host {
+    display: block;
+}
+
+.slds-item {
+    list-style: none;
+}

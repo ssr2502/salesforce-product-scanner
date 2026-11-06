@@ -1,0 +1,98 @@
+<template>
+    <lightning-card title="Product Scanner" icon-name="utility:scan">
+        <div class="slds-var-p-around_medium">
+
+            <!-- Desktop / unsupported surface -->
+            <template if:true={scannerUnavailable}>
+                <div class="slds-box slds-theme_shade slds-text-align_center slds-var-p-around_medium">
+                    <lightning-icon
+                        icon-name="utility:warning"
+                        alternative-text="Unavailable"
+                        size="medium"
+                        class="slds-var-m-bottom_small"
+                    ></lightning-icon>
+                    <p class="slds-text-body_regular">
+                        Barcode scanning is only available in the Salesforce Mobile App.
+                    </p>
+                </div>
+            </template>
+
+            <!-- Scanner available -->
+            <template if:false={scannerUnavailable}>
+                <!-- Scan button -->
+                <div class="slds-text-align_center slds-var-m-bottom_medium">
+                    <lightning-button
+                        label={scanButtonLabel}
+                        icon-name="utility:scan"
+                        variant="brand"
+                        onclick={handleScanClick}
+                        disabled={isScanning}
+                    ></lightning-button>
+                </div>
+
+                <!-- Scanning indicator -->
+                <template if:true={isScanning}>
+                    <div class="slds-text-align_center slds-var-m-bottom_medium">
+                        <lightning-spinner
+                            alternative-text="Scanning…"
+                            size="small"
+                        ></lightning-spinner>
+                        <p class="slds-text-body_small slds-var-m-top_small slds-text-color_weak">
+                            Point the camera at a barcode…
+                        </p>
+                    </div>
+                </template>
+
+                <!-- Error message -->
+                <template if:true={errorMessage}>
+                    <div class="slds-box slds-theme_error slds-var-m-bottom_medium">
+                        <p class="slds-text-body_small">{errorMessage}</p>
+                    </div>
+                </template>
+
+                <!-- Scan results -->
+                <template if:true={hasResults}>
+                    <div class="slds-var-m-top_medium">
+                        <h3 class="slds-text-heading_small slds-var-m-bottom_small">
+                            Scanned Products ({scannedItems.length})
+                        </h3>
+                        <ul class="slds-has-dividers_top-space">
+                            <template for:each={scannedItems} for:item="item">
+                                <li key={item.id} class="slds-item slds-var-p-vertical_small">
+                                    <div class="slds-grid slds-grid_vertical-align-center">
+                                        <div class="slds-col slds-grow">
+                                            <p class="slds-text-body_regular slds-truncate" title={item.value}>
+                                                {item.value}
+                                            </p>
+                                            <p class="slds-text-body_small slds-text-color_weak">
+                                                {item.type}
+                                            </p>
+                                        </div>
+                                        <div class="slds-col slds-no-flex">
+                                            <lightning-button-icon
+                                                icon-name="utility:delete"
+                                                variant="bare"
+                                                alternative-text="Remove"
+                                                data-id={item.id}
+                                                onclick={handleRemoveItem}
+                                            ></lightning-button-icon>
+                                        </div>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+
+                        <div class="slds-var-m-top_medium slds-text-align_right">
+                            <lightning-button
+                                label="Clear All"
+                                variant="destructive-text"
+                                onclick={handleClearAll}
+                            ></lightning-button>
+                        </div>
+                    </div>
+                </template>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>
